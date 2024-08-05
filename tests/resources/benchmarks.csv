@@ -1,0 +1,4 @@
+id,datetime,CIRRUS_version,readerstudy.loading_first_case,readerstudy.navigate_to_second_case,algorithmjob.loading,archiveitem.loading
+0,2024-08-05,v0.0.5,100,100,100,100
+1,2024-08-06,v0.0.5,200,200,200,200
+2,2024-08-05,v0.0.5,300,300,300,300

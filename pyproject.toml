@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "cirrus-benchmark-suite"
+version = "0.0.0"
+description = "A project for benchmarking the timing performance of the CIRRUS viewer on Grand-Challenge.org"
+authors = ["Chris van Run"]
+license = "Apache License 2.0"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+playwright = "^1.45.1"
+python-dotenv = "^1.0.1"
+pandas = "^2.2.2"
+scipy = "^1.14.0"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.2"
+black = "23.9.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.isort]
+profile = "black"
+known_first_party = ["challenge-forge", "tests"]
+line_length = 79
+
+[tool.black]
+line-length = 79
+target-version = ['py311']
