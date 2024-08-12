@@ -36,6 +36,10 @@ class BenchmarkHistory:
         self.benchmarks = df
 
     @property
+    def latest(self):
+        return self.benchmarks.iloc[-1]
+
+    @property
     def metrics(self):
         metric_columns = [
             c for c in self.benchmarks.columns if c not in self.META_COLUMNS

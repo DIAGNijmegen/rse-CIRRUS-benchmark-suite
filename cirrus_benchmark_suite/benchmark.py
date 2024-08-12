@@ -2,6 +2,7 @@ import statistics
 from datetime import datetime
 
 from playwright.sync_api import expect, sync_playwright
+from scipy.stats import norm
 
 from cirrus_benchmark_suite import evaluate
 from cirrus_benchmark_suite.history import BenchmarkHistory
@@ -151,6 +152,29 @@ def setup(ctx):
     return session_url, metadata
 
 
+def report(history, evaluation):
+    for column in history.metrics.columns:
+        print(f"## {column}")
+        if column not in evaluation.p_values:
+            print("Skipped: no new data point")
+            continue
+        print(f"### Runtime: {history.latest[column]}ms")
+        print(f"P-value: {evaluation.p_values[column]*100:0.3f}%")
+        print(
+            "\tProbability of getting this runtime under the assumption that it is from the reference distribution: a low value suggests an outlier."
+        )
+        print(
+            f"Reference distribution (sample size={evaluation.n_history[column]}):"
+        )
+
+        mean = evaluation.means[column]
+        sem = evaluation.sem[column]
+        print(f"Average±SEM: {mean:0.0f}±{sem:0.0f}ms")
+        print(f"33rd Percentile: {norm.ppf(0.33, loc=mean, scale=sem):0.0f}ms")
+        print(f"66th Percentile: {norm.ppf(0.66, loc=mean, scale=sem):0.0f}ms")
+        print("\n---")
+
+
 def test():
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch(headless=not DEBUG)
@@ -175,21 +199,7 @@ def test():
 
             eval = evaluate.evaluate(history.metrics)
 
-            for column in history.metrics.columns:
-                print("\n\n")
-                print("Metric:")
-                print(f"\t{column}")
-                if column not in eval.p_values:
-                    print("\tSkipped: no new data point")
-                    continue
-                print("P-value:")
-                print(f"\t{eval.p_values[column]:0.3f}")
-                print("Score:")
-                print(f"\t{benchmarks[column]}ms")
-                print(f"Reference (n={eval.n_history[column]}) Mean±Stdev:")
-                print(
-                    f"\t{eval.means[column]:0.0f}±{eval.stds[column]:0.0f}ms"
-                )
+            report(history, eval)
 
         finally:
             ctx.close()

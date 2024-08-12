@@ -72,3 +72,22 @@ def get_cirrus_version(page):
             return match.group(1)
 
     raise RuntimeError("Could not find CIRRUS version")
+
+
+def generate_markdown_table(headers, rows):
+    # Create the header row
+    header_row = "| " + " | ".join(headers) + " |"
+
+    # Create the separator row (for alignment)
+    separator_row = "| " + " | ".join(["---"] * len(headers)) + " |"
+
+    # Create the data rows
+    data_rows = []
+    for row in rows:
+        data_row = "| " + " | ".join(str(cell) for cell in row) + " |"
+        data_rows.append(data_row)
+
+    # Combine all parts into the final markdown table
+    markdown_table = "\n".join([header_row, separator_row] + data_rows)
+
+    return markdown_table

@@ -8,7 +8,7 @@ import scipy.stats
 class Evaluation(NamedTuple):
     p_values: pd.Series
     means: pd.Series
-    stds: pd.Series
+    sem: pd.Series
     n_history: int
 
 
@@ -28,13 +28,13 @@ def evaluate(metrics):
     history = history.loc[:, ~missing]
 
     means = history.mean()
-    stds = history.std()
+    sem = history.sem()
 
     # Calculate the z-scores for the last row
-    z_scores = (last_row - means) / stds
+    z_scores = (last_row - means) / sem
 
     # Calculate the p-values based on the z-scores
     # Use 2-tailed because we like to know if we speed things up significantly
     p_values = z_scores.apply(lambda z: scipy.stats.norm.sf(abs(z)) * 2)
 
-    return Evaluation(p_values, means, stds, n_history=history.count())
+    return Evaluation(p_values, means, sem, n_history=history.count())
