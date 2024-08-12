@@ -38,6 +38,12 @@ def create_viewer_session(page):
     )
 
     response = page.goto(session_create_url)
+
+    if response.status in (404, 403):
+        raise RuntimeError(
+            f"Failed to create the viewer session. Either there is no active image for the viewer or insufficient permissions. URL used: {session_create_url}"
+        )
+
     assert response.ok, "session creation started"
     page.wait_for_url("**/cirrus/", timeout=30_000)
 
