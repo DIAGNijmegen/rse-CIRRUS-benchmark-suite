@@ -48,3 +48,30 @@ def create_viewer_session(page):
     page.wait_for_url("**/cirrus/", timeout=30_000)
 
     return page.url
+
+
+permission_checks = []
+
+
+def permission_check(url):
+    def decorator(func):
+        permission_checks.append(url)
+
+        def wrapper(*args, **kwargs):
+            return func(*args, **kwargs)
+
+        return wrapper
+
+    return decorator
+
+
+def do_permission_checks(page):
+    problem_urls = []
+    for url in permission_checks:
+        response = page.goto(url)
+        if not response.ok:
+            problem_urls.append(url)
+    if problem_urls:
+        raise RuntimeError(
+            f"Insufficient permissions for URLs: {problem_urls}"
+        )

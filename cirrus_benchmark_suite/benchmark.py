@@ -6,7 +6,12 @@ from scipy.stats import norm
 
 from cirrus_benchmark_suite import evaluate
 from cirrus_benchmark_suite.history import BenchmarkHistory
-from cirrus_benchmark_suite.session import create_viewer_session, login
+from cirrus_benchmark_suite.session import (
+    create_viewer_session,
+    do_permission_checks,
+    login,
+    permission_check,
+)
 from cirrus_benchmark_suite.utils import (
     DEBUG,
     Timer,
@@ -49,6 +54,9 @@ def gen_benchmark_metadata(page):
     }
 
 
+@permission_check(
+    "https://grand-challenge.org/api/v1/reader-studies/1e5946ed-46f8-4501-92fb-d85c91fa853c/"
+)
 def benchmark_reader_study(benchmarks, page, session_url):
     reader_study_url = f"{session_url}reader-study/1e5946ed-46f8-4501-92fb-d85c91fa853c/?config=2077fa74-9976-415f-8772-06801eb3d3e3"
 
@@ -85,6 +93,9 @@ def benchmark_reader_study(benchmarks, page, session_url):
     )  # Note: not offsetting for page loading here
 
 
+@permission_check(
+    "https://grand-challenge.org/api/v1/algorithms/jobs/82faf859-0d3d-4b6b-813c-804a86bd398c"
+)
 def benchmark_algorithm_job(benchmarks, page, session_url):
     algorihm_job_url = f"{session_url}algorithm-job/82faf859-0d3d-4b6b-813c-804a86bd398c?config=e0114bc8-1f0c-4f9f-b921-6c8f1e1ef850"
     with Timer() as timer:
@@ -106,6 +117,9 @@ def benchmark_algorithm_job(benchmarks, page, session_url):
     benchmarks["algorithmjob.loading"] = _correct(timer.elapsed_time)
 
 
+@permission_check(
+    "https://grand-challenge.org/api/v1/archives/items/72166e13-d52b-4fa8-ab3a-bea1e02d5bc4"
+)
 def benchmark_archive_item(benchmarks, page, session_url):
     archive_item_url = (
         f"{session_url}archive-item/72166e13-d52b-4fa8-ab3a-bea1e02d5bc4"
@@ -149,6 +163,8 @@ def setup(ctx):
         # Re-use page to get metdata
         metadata = gen_benchmark_metadata(page)
 
+        # Early detection of permission problems
+        do_permission_checks(page)
     return session_url, metadata
 
 
