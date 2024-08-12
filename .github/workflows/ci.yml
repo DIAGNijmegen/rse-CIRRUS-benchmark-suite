@@ -44,6 +44,6 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install poetry
       - name: Test with Poetry
-        run: /
+        run: |
           poetry install -v
           poetry run pytest -v
