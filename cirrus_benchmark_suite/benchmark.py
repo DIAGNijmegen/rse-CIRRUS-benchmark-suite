@@ -165,6 +165,7 @@ def setup(ctx):
 
         # Early detection of permission problems
         do_permission_checks(page)
+        
     return session_url, metadata
 
 
