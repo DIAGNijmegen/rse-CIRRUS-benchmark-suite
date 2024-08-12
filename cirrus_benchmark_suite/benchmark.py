@@ -179,9 +179,7 @@ def report(history, evaluation):
         print(
             "\tProbability of getting this runtime under the assumption that it is from the reference distribution: a low value suggests an outlier."
         )
-        print(
-            f"Reference distribution (sample size={evaluation.n_history[column]}):"
-        )
+        print(f"Reference distribution (N={evaluation.n_history[column]}):")
 
         mean = evaluation.means[column]
         sem = evaluation.sem[column]
