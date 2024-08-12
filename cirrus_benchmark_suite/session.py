@@ -1,3 +1,5 @@
+import os
+
 from cirrus_benchmark_suite.utils import DEBUG, getenv
 
 
@@ -30,12 +32,46 @@ def login(page):
 
 
 def create_viewer_session(page):
-    session_create_url = (
-        getenv("SESSION_CREATE_URL")
-        or "https://grand-challenge.org/viewers/cirrus-staging/sessions/create/"
+    session_create_url = os.getenv(
+        "SESSION_CREATE_URL",
+        "https://grand-challenge.org/viewers/cirrus-staging/sessions/create/",
     )
+
     response = page.goto(session_create_url)
+
+    if response.status in (404, 403):
+        raise RuntimeError(
+            f"Failed to create the viewer session. Either there is no active image for the viewer or insufficient permissions. URL used: {session_create_url}"
+        )
+
     assert response.ok, "session creation started"
     page.wait_for_url("**/cirrus/", timeout=30_000)
 
     return page.url
+
+
+permission_checks = []
+
+
+def permission_check(url):
+    def decorator(func):
+        permission_checks.append(url)
+
+        def wrapper(*args, **kwargs):
+            return func(*args, **kwargs)
+
+        return wrapper
+
+    return decorator
+
+
+def do_permission_checks(page):
+    problem_urls = []
+    for url in permission_checks:
+        response = page.goto(url)
+        if not response.ok:
+            problem_urls.append(url)
+    if problem_urls:
+        raise RuntimeError(
+            f"Insufficient permissions for URLs: {problem_urls}"
+        )

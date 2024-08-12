@@ -12,6 +12,13 @@ Install via Poetry:
 ```shell
 python -m pip install poetry
 poetry install -v
+poetry run playwright install
+```
+
+Perhaps it is still required to install some missing depedencies to run the playwright browser. You can do so via:
+
+```shell
+sudo playwright install-deps
 ```
 
 ## Configuration
@@ -20,7 +27,7 @@ Benchmark is configured via the environment: use and `.env` file locally to conf
 
 | ENV           | TYPE      | Description |
 | ------------- | ------------- | ------------- |
-| DEBUG | TRUE/FALSE | Allow for headless execution |
+| DEBUG | TRUE/FALSE | Allow for an execution with a head for viewing |
 | GRAND_CHALLENGE_USERNAME | String | Username to start a session on Grand-Challenge.org |
 | GRAND_CHALLENGE_PASSWORD | String | Password to start a session on Grand-Challenge.org |
 | SESSION_CREATE_URL | String (url) | Overwrite to configure the session creation URL, defaults to using viewer 'cirrus-staging' |
