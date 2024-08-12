@@ -1,3 +1,5 @@
+import os
+
 from cirrus_benchmark_suite.utils import DEBUG, getenv
 
 
@@ -30,10 +32,11 @@ def login(page):
 
 
 def create_viewer_session(page):
-    session_create_url = (
-        getenv("SESSION_CREATE_URL")
-        or "https://grand-challenge.org/viewers/cirrus-staging/sessions/create/"
+    session_create_url = os.getenv(
+        "SESSION_CREATE_URL",
+        "https://grand-challenge.org/viewers/cirrus-staging/sessions/create/",
     )
+
     response = page.goto(session_create_url)
     assert response.ok, "session creation started"
     page.wait_for_url("**/cirrus/", timeout=30_000)
