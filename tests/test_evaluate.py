@@ -45,6 +45,6 @@ def test_missing_value():
 
     assert np.isnan(eval.p_values["missing_all_history"])
     assert np.isnan(eval.means["missing_all_history"])
-    assert np.isnan(eval.stds["missing_all_history"])
+    assert np.isnan(eval.sem["missing_all_history"])
 
     assert "missing_new" not in eval.p_values
