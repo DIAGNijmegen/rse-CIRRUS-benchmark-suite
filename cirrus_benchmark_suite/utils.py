@@ -23,11 +23,11 @@ class Timer(ContextDecorator):
     elapsed_time = None  # ms
 
     def __enter__(self):
-        self.start_time = time.time()
+        self.start_time = time.perf_counter()
         return self
 
     def __exit__(self, *_, **__):
-        self.end_time = time.time()
+        self.end_time = time.perf_counter()
         self.elapsed_time = round((self.end_time - self.start_time) * 1000)
 
 
